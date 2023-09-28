@@ -45,13 +45,9 @@ def set_verification_mode(mode):
 
 
 def get_verification_mode():
-    if USE_PRODUCTION and USE_SANDBOX:
-        return 'review'
     if USE_PRODUCTION:
-        return 'production'
-    if USE_SANDBOX:
-        return 'sandbox'
-    return 'reject'
+        return 'review' if USE_SANDBOX else 'production'
+    return 'sandbox' if USE_SANDBOX else 'reject'
 
 
 class Request(object):
@@ -69,9 +65,7 @@ class Request(object):
         self.response = None
 
     def __repr__(self):  # pragma: no cover
-        valid = None
-        if self.result:
-            valid = self.result['status'] == 0
+        valid = self.result['status'] == 0 if self.result else None
         return u'<Request(valid:{0}, data:{1}...)>'.format(valid, self.receipt[:20])
 
     @property
@@ -80,11 +74,11 @@ class Request(object):
 
     @property
     def request_content(self):
-        if self.password is not None:
-            request_content = {'receipt-data': self.receipt, 'password': self.password}
-        else:
-            request_content = {'receipt-data': self.receipt}
-        return request_content
+        return (
+            {'receipt-data': self.receipt, 'password': self.password}
+            if self.password is not None
+            else {'receipt-data': self.receipt}
+        )
 
     def verify_from(self, url, verify_ssl=False):
         """Try verification from given url."""

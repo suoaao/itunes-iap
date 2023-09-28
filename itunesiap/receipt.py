@@ -53,7 +53,7 @@ def _rfc3339_to_datetime(value):
     except ValueError as e:
         value, timezone = value.rsplit(' ', 1)
         try:
-            d = dateutil.parser.parse(value + '+00:00')
+            d = dateutil.parser.parse(f'{value}+00:00')
         except ValueError:
             raise e
         d = d.replace(tzinfo=pytz.timezone(timezone))
@@ -62,8 +62,7 @@ def _rfc3339_to_datetime(value):
 
 def _ms_to_datetime(value):
     nd = datetime.datetime.utcfromtimestamp(int(value) / 1000)
-    ad = nd.replace(tzinfo=pytz.UTC)
-    return ad
+    return nd.replace(tzinfo=pytz.UTC)
 
 
 def _to_bool(data):
@@ -165,8 +164,6 @@ class ObjectMapper(object):
                         raise MissingFieldError(name)
                     return transform(value)
                 setattr(self.__class__, name, lazy_property(_get))
-            else:
-                pass  # unhandled. raise AttributeError
         return self.__getattribute__(name)
 
     @classmethod
@@ -368,9 +365,7 @@ class Purchase(ObjectMapper):
     ])
 
     def __eq__(self, other):
-        if not isinstance(other, Purchase):  # pragma: no cover
-            return False
-        return self._ == other._
+        return False if not isinstance(other, Purchase) else self._ == other._
 
     @lazy_property
     def expires_date(self):

@@ -24,8 +24,8 @@ class RequestBase(object):
         self.proxy_url = kwargs.pop('proxy_url', None)
         if kwargs:  # pragma: no cover
             raise TypeError(
-                u"__init__ got unexpected keyword argument {}".format(
-                    ', '.join(kwargs.keys())))
+                f"__init__ got unexpected keyword argument {', '.join(kwargs.keys())}"
+            )
 
     def __repr__(self):
         return u'<Request({0}...)>'.format(self.receipt_data[:20])

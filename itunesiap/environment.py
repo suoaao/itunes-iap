@@ -92,10 +92,7 @@ class Environment(object):
         """Extract options from `self` and merge to `kwargs` then return a new
         dictionary with the values.
         """
-        options = {}
-        for item in self.ITEMS:
-            options[item] = getattr(self, item)
-        return options
+        return {item: getattr(self, item) for item in self.ITEMS}
 
     # backward compatibility features
     _stack = EnvironmentStack()
